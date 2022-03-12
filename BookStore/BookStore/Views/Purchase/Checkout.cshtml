@@ -11,7 +11,7 @@
     <p>Please enter your details...</p>
 </div>
 <div class="align-content-center" style="padding-inline:40px">
-    <form method="post" asp-action="Checkout" >
+    <form method="post" asp-action="Checkout">
         <div asp-validation-summary="All" class="text-danger"></div>
         <h4>Ship To</h4>
 
@@ -60,4 +60,11 @@
             <input class="btn btn-primary" type="submit" value="Confirm Purchase" />
         </div>
     </form>
+    <div>
+        <h1>Progress</h1>
+        <div class="progress progress-info">
+            <div class="progress-bar" style="width: 70%;"></div>
+            <span>70% Complete</span>
+        </div>
+    </div>
 </div>
