@@ -53,9 +53,8 @@ using Microsoft.EntityFrameworkCore;
 #line default
 #line hidden
 #nullable disable
-    [Microsoft.AspNetCore.Components.RouteAttribute("/admin/books")]
-    [Microsoft.AspNetCore.Components.RouteAttribute("/admin")]
-    public partial class Books : OwningComponentBase<IBookStoreRepository>
+    [Microsoft.AspNetCore.Components.RouteAttribute("/admin/books/details/{id:long}")]
+    public partial class Details : Microsoft.AspNetCore.Components.ComponentBase
     {
         #pragma warning disable 1998
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
@@ -63,30 +62,22 @@ using Microsoft.EntityFrameworkCore;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 45 "C:\Users\alici\source\repos\BookStore\BookStore\Pages\Admin\Books.razor"
+#line 50 "C:\Users\alici\source\repos\BookStore\BookStore\Pages\Admin\Details.razor"
        
-    public IBookStoreRepository repo => Service;
+    [Inject]
+    public IBookStoreRepository repo { get; set; }
 
-    public IEnumerable<Book> BookData { get; set; }
+    [Parameter]
+    public long Id { get; set; }
 
-    protected async override Task OnInitializedAsync()
+    public Book b { get; set; }
+
+    protected override void OnParametersSet()
     {
-        await UpdateBooks();
+        b = repo.Books.FirstOrDefault(x => x.BookId == Id);
     }
 
-    public async Task UpdateBooks()
-    {
-        BookData = await repo.Books.ToListAsync();
-    }
-
-    public async Task RemoveBook(Book b)
-    {
-        repo.DeleteBook(b);
-        await UpdateBooks();
-    }
-
-    public string GetDetailsUrl(long id) => $"/admin/books/details/{id}";
-    public string GetEditUrl(long id) => $"/admin/books/edit/{id}";
+    public string EditUrl => $"/admin/books/edit/{b.BookId}";
 
 #line default
 #line hidden

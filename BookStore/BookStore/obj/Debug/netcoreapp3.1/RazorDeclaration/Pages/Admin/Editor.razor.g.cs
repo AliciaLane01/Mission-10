@@ -53,9 +53,9 @@ using Microsoft.EntityFrameworkCore;
 #line default
 #line hidden
 #nullable disable
-    [Microsoft.AspNetCore.Components.RouteAttribute("/admin/books")]
-    [Microsoft.AspNetCore.Components.RouteAttribute("/admin")]
-    public partial class Books : OwningComponentBase<IBookStoreRepository>
+    [Microsoft.AspNetCore.Components.RouteAttribute("/admin/books/edit/{id:long}")]
+    [Microsoft.AspNetCore.Components.RouteAttribute("/admin/books/create")]
+    public partial class Editor : OwningComponentBase<IBookStoreRepository>
     {
         #pragma warning disable 1998
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
@@ -63,30 +63,41 @@ using Microsoft.EntityFrameworkCore;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 45 "C:\Users\alici\source\repos\BookStore\BookStore\Pages\Admin\Books.razor"
+#line 64 "C:\Users\alici\source\repos\BookStore\BookStore\Pages\Admin\Editor.razor"
        
+    [Parameter]
+    public long Id { get; set; } = 0;
+
+    public string ThemeColor => Id == 0 ? "primary" : "warning";
+    public string TitleText => Id == 0 ? "Create" : "Edit";
+
+    public Book b { get; set; } = new Book();
     public IBookStoreRepository repo => Service;
 
-    public IEnumerable<Book> BookData { get; set; }
-
-    protected async override Task OnInitializedAsync()
+    protected override void OnParametersSet()
     {
-        await UpdateBooks();
+        if (Id != 0)
+        {
+            b = repo.Books.FirstOrDefault(x => x.BookId == Id);
+        }
     }
 
-    public async Task UpdateBooks()
+    public void SaveBook()
     {
-        BookData = await repo.Books.ToListAsync();
+        if (Id == 0)
+        {
+            repo.CreateBook(b);
+        }
+        else
+        {
+            repo.SaveBook(b);
+        }
+
+        NavManager.NavigateTo("/admin/books");
     }
 
-    public async Task RemoveBook(Book b)
-    {
-        repo.DeleteBook(b);
-        await UpdateBooks();
-    }
-
-    public string GetDetailsUrl(long id) => $"/admin/books/details/{id}";
-    public string GetEditUrl(long id) => $"/admin/books/edit/{id}";
+    [Inject]
+    public NavigationManager NavManager { get; set; }
 
 #line default
 #line hidden
